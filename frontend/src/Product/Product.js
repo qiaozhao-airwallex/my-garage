@@ -18,6 +18,25 @@ export default class Product extends Component {
             ]
         }
     }
+
+    retrieveServerData = () => {
+        fetch("http://localhost:8080/product", {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+            .then(results => {
+                return results.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+    }
+
     onChange = (e) => {
         const state = this.state;
         state[e.target.name] = e.target.value;
@@ -27,17 +46,48 @@ export default class Product extends Component {
     onSubmit = (e) => {
         e.preventDefault();
 
-        this.setState({
-            productList: this.state.productList.concat([{
-                name: this.state.name,
-                price: this.state.price,
-                image: backendURL + this.state.image,
-            }])
+        let payload = {
+            name: this.state.name,
+            price: this.state.price,
+            image: this.state.image,
+        };
+
+        fetch("http://localhost:8080/product", {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(results => {
+            return results.json();
+        })
+        .then(data => {
+            console.log(data);
+            // this.props.selectImage(data.targetFileName);
+            this.retrieveServerData();
+            // this.setState({
+            //     imagePreviewUrl: "http://localhost:8080/image/" + data.targetFileName
+            // });
+        })
+        .catch((error) => {
+            console.log(error)
         });
+
+        // this.setState({
+        //     productList: this.state.productList.concat([{
+        //         name: this.state.name,
+        //         price: this.state.price,
+        //         image: this.state.image,
+        //     }])
+        // });
     }
 
-    selectImageAbc = (targetFileName) => {
-        this.setState({image: targetFileName});
+    selectImageAbc = (originalFileName, targetFileName) => {
+        this.setState({image: {
+            originalFileName: originalFileName,
+            targetFileName: backendURL + targetFileName}});
     }
 
     render() {

@@ -38,7 +38,7 @@ export default class ImageUpload extends React.Component {
             })
             .then(data => {
                 console.log(data);
-                this.props.selectImage(data.targetFileName);
+                this.props.selectImage(data.originalFileName, data.targetFileName);
                 this.setState({
                     imagePreviewUrl: "http://localhost:8080/image/" + data.targetFileName
                 });
